@@ -4,13 +4,12 @@ for _ in range(n):
     x, y = map(int, input().split())
     d = y - x
     
-    # d보다 작은 최대의 제곱수 i^2
-    i = 0
-    while i ** 2 <= d:
-        i += 1
-    i -= 1
+    # d보다 작은 최대의 제곱수 k^2
+    k = 0
+    while k ** 2 <= d:
+        k += 1
+    k -= 1
     
-    term = 2 * i - 1 + (d - i ** 2 + i - 1) // i
+    result = 2 * k - 1 + (d - k ** 2 + k - 1) // k
     
-    print(term)
-    
+    print(result)
