@@ -31,16 +31,19 @@ map = [[0] * x_size[n-1] for _ in range(y_size[n-1])]
 
 star(n, 0, 0)
 
-for y in range(y_size[n-1]):
-    for x in range(x_size[n-1]):
-        if n % 2 == 1:
-            if x > (x_size[n-1] // 2 + y):
-                continue
-        else:
-            if x > (y_size[n-1] - y + x_size[n-1] // 2 - 1):
-                continue
-        if map[y][x]:
-            print('*', end='')
-        else:
-            print(' ', end='')
-    print()
+if n % 2:
+    for y in range(y_size[n-1]):
+        for x in range(x_size[n-1] - y_size[n-1] + y + 1):
+            if map[y][x]:
+                print('*', end='')
+            else:
+                print(' ', end='')
+        print()
+else: 
+    for y in range(y_size[n-1]):
+        for x in range(x_size[n-1] - y):
+            if map[y][x]:
+                print('*', end='')
+            else:
+                print(' ', end='')
+        print()
