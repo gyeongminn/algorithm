@@ -1,5 +1,4 @@
 def mode(arr):
-    # 배열의 개수 세기
     dic = {}
     for num in arr:
         if num in dic:
