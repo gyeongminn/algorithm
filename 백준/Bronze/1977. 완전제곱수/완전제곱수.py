@@ -1,15 +1,10 @@
 n = int(input())
 m = int(input())
 
-square = [x**2 for x in range(1, 101)]
+a = [i*i for i in range(1, 101) if n <= i*i <= m]
 
-arr = []
-for i in range(n, m+1):
-    if i in square:
-        arr.append(i)
-        
-if arr == []:
+if len(a) == 0:
     print(-1)
 else:
-    print(sum(arr))
-    print(arr[0])
+    print(sum(a))
+    print(a[0])
