@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<string.h>
 int main() {
-    int C, score[1001], person, N = 0, count = 0;
+    int C, score[1000], person, N = 0, count = 0;
     float avg;
     scanf("%d", &C);
     for (int i = 0; i < C; i++) {
