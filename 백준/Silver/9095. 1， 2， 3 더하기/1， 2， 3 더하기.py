@@ -1,6 +1,5 @@
 import sys
 
-input = sys.stdin.readline
 test_case = [int(input()) for _ in range(int(input()))]
 
 dp = [0 for _ in range(12)]
