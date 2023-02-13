@@ -1,28 +1,17 @@
 # 참고 : https://ii-eugene-ii.github.io/Post/Post01000/00130.html
-
+# 참고 : https://ii-eugene-ii.github.io/Post/Post01000/00008.html
 import sys
 
 input = sys.stdin.readline
-
-
-def is_palin_prime(n):
-
-    if n in [101101, 129921, 1837381]:
-        return False
-
-    if pow(2, n-1, n) == 1:
-        return True
-    else:
-        return False
-
-
 n, m = map(int, input().split())
-
 result = 0
 
 for i in [2, 3, 5, 7, 11]:
     if n <= i <= m:
         result += 1
+
+if n <= 1837381 <= m:
+    result -= 1
 
 start_digit = len(str(n))
 if start_digit < 3:
@@ -41,7 +30,7 @@ for digit in range(start_digit, end_digit + 1, 2):
             num = int(half_num[::-1] + str(mid_num) + half_num)
             if not n <= num <= m or num % 10 == 5:
                 continue
-            if is_palin_prime(num):
+            if pow(2, num - 1, num) == 1:
                 result += 1
 
 print(result)
