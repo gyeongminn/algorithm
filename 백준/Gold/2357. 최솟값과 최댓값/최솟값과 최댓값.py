@@ -1,6 +1,8 @@
 from math import ceil, log2
 import sys
 
+input = sys.stdin.readline
+
 
 def find_min(start, end, left, right, node):
     if right < start or left > end:
@@ -23,8 +25,6 @@ def find_max(start, end, left, right, node):
     mid = (start + end) // 2
     return max(find_max(start, mid, left, right, node*2), find_max(mid+1, end, left, right, node*2+1))
 
-
-input = sys.stdin.readline
 
 n, m = map(int, input().split())
 
