@@ -1,9 +1,16 @@
-n = int(input())
-i = 2
+def factorize(n):
+    result = []
+    factor = 2
+    while factor * factor <= n:
+        while n % factor == 0:
+            result.append(factor)
+            n = n // factor
+        factor += 1
+    if n > 1:
+        result.append(n)
+    return result
 
-while i <= n:
-    if n % i == 0:
-        print(i)
-        n //= i
-    else:
-        i += 1
+
+n = int(input())
+for i in factorize(n):
+    print(i)
