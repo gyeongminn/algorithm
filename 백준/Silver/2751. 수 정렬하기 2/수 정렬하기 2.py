@@ -1,10 +1,8 @@
 import sys
+import random
 
-n = int(sys.stdin.readline())
-nums = []
+input = sys.stdin.readline
 
-for _ in range(n):
-    nums.append(int(sys.stdin.readline()))
-
-for num in sorted(nums):
-    print(num)
+arr = [int(input()) for _ in range(int(input()))]
+random.shuffle(arr)
+print(*sorted(arr), sep='\n')
