@@ -1,10 +1,17 @@
-def answer(n):
-    for i in range(1, n):
-        arr = [int(a) for a in str(i)]
-        s = i + sum(arr)
-        if s == n:
-            return i
-    return 0
+import sys
+
+input = sys.stdin.readline
 
 n = int(input())
-print(answer(n))
+start = 1
+result = 0
+
+if len(str(n)) > 2:
+    start = int('9' * (len(str(n)) - 2))
+    
+for i in range(start, n):
+    if n == i + sum(map(int, str(i))):
+        result = i
+        break
+    
+print(result)
