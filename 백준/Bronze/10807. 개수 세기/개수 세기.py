@@ -1,9 +1,4 @@
-import sys
-
-input = sys.stdin.readline
-
 n = int(input())
-arr = list(map(int, input().split()))
-find = int(input())
-
-print(arr.count(find))
+arr = [int(x) for x in input().split()]
+v = int(input())
+print(arr.count(v))
