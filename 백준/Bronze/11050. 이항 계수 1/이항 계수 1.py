@@ -1,11 +1,12 @@
-from math import factorial
+import sys
 
-n, k = map(int, input().split())
+input = sys.stdin.readline
 
-num1 = 1
-for i in range(k):
-    num1 *= n - i
+n, r = map(int, input().split())
+p = 10007
 
-num2 = factorial(k)
+factorial = [1 for _ in range(n + 1)]
+for i in range(2, n + 1):
+    factorial[i] = factorial[i - 1] * i % p
 
-print(num1 // num2)
+print(factorial[n] * pow(factorial[r] * factorial[n - r] % p, p - 2, p) % p)
