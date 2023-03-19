@@ -1,0 +1,1 @@
+print(sum(map(lambda x: x*x, [int(x) for x in input().split()])) % 10)
