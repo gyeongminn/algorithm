@@ -8,7 +8,7 @@
 
 ### 분류
 
-구현(implementation), 수학(math), 조합론(combinatorics)
+수학, 구현, 조합론
 
 ### 문제 설명
 
