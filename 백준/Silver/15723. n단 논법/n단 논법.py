@@ -2,6 +2,7 @@ import sys
 from collections import deque
 input = sys.stdin.readline
 
+
 def change(x):
     return ord(x) - ord('a')
 
@@ -18,6 +19,7 @@ def bfs(node, end):
                 visited[child] = True
                 queue.append(child)
     return False
+
 
 graph = [[] for _ in range(26)]
 n = int(input())
