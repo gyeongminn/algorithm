@@ -2,15 +2,6 @@ from math import *
 import sys
 input = sys.stdin.readline
 
-
-def check(x, y, color):
-    for ny in range(y, y+size):
-        for nx in range(x, x+size):
-            if color != arr[ny][nx]:
-                return False
-    return True
-
-
 arr = []
 n = int(input())
 for _ in range(n):
@@ -24,9 +15,17 @@ for i in range(ceil(log2(n)), -1, -1):
         for x in range(0, n, size):
             if not visited[y][x]:
                 color = arr[y][x]
-                if check(x, y, color):
-                    for ny in range(y, y+size):
-                        for nx in range(x, x+size):
-                            visited[ny][nx] = True
-                    res[color] +=1
+                flag = False
+                for ny in range(y, y+size):
+                    for nx in range(x, x+size):
+                        if color != arr[ny][nx]:
+                            flag = True
+                            break
+                    if flag:
+                        break
+                if not flag:
+                    for _y in range(y, y+size):
+                        for _x in range(x, x+size):
+                            visited[_y][_x] = True
+                    res[color] += 1
 print(*res, sep='\n')
