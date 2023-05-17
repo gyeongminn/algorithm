@@ -1,6 +1,5 @@
 import sys
 input = sys.stdin.readline
-mod = 1000000007
 
 
 def make_nCr_mod(max_n, mod):
@@ -14,12 +13,12 @@ def make_nCr_mod(max_n, mod):
     return nCr_mod
 
 
-nCr = make_nCr_mod(10000, 1000000007)
+mod = 1000000007
+nCr = make_nCr_mod(10000, mod)
 n, m = map(int, input().split())
 ans = 0
-
-for b in range(n // m+1):
+for b in range(n // m + 1):
     a = n - b * m
-    ans += nCr(a+b, b)
+    ans += nCr(a + b, b)
     
 print(ans % mod)

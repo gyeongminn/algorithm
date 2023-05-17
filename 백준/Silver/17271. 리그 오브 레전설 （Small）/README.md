@@ -1,10 +1,10 @@
-# [Silver II] 리그 오브 레전설 (Small) - 17271 
+# [Silver I] 리그 오브 레전설 (Small) - 17271 
 
 [문제 링크](https://www.acmicpc.net/problem/17271) 
 
 ### 성능 요약
 
-메모리: 31256 KB, 시간: 44 ms
+메모리: 114328 KB, 시간: 120 ms
 
 ### 분류
 
