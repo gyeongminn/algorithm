@@ -1,9 +1,6 @@
 sub = input().split('-')
-res = None
+ans = None
 for item in sub:
-    add = list(map(int, item.split('+')))
-    if res == None:
-        res = sum(add)
-    else:
-        res -= sum(add)
-print(res)
+    item = sum(map(int, item.split('+')))
+    ans = item if ans == None else ans - item
+print(ans)
