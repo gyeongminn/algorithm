@@ -17,9 +17,9 @@ int main() {
 	int e = 0;
 	for (int s = 1; s <= N; ++s) {
 		while (e + 1 <= N && cnt <= K) {
+			if (cnt <= K) ans = max(ans, e - s + 1 - cnt);
 			if (A[e + 1] % 2) cnt++;
 			e++;
-			if (cnt <= K) ans = max(ans, e - s + 1 - cnt);
 		}
 		if (cnt <= K) ans = max(ans, e - s + 1 - cnt);
 		if (A[s] % 2) cnt--;
