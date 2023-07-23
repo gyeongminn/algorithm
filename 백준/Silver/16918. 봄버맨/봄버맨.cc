@@ -36,35 +36,41 @@ void bomb() {
 }
 
 void solve() {
+    if (N == 1) {
+        // 1이면 아무 일도 없다
+        return;
+    } else if (!(N & 1)) {
+        // 짝수면 전부 폭탄
+        for (int r = 0; r < R; ++r) {
+            for (int c = 0; c < C; ++c) {
+                graph[r][c] = 'O';
+            }
+        }
+    } else if (N % 4 == 3) {
+        // 3 7 11 (4로 나눈 나머지가 3) -> 한 번 폭탄
+        bomb();
+    } else {
+        // 5 9 13 (4로 나눈 나머지가 1) -> 두 번 폭탄
+        bomb();
+        bomb();
+    }
+}
+
+
+int main() {
+    fastio;
+    cin >> R >> C >> N;
     for (int r = 0; r < R; ++r) {
         for (int c = 0; c < C; ++c) {
             cin >> graph[r][c];
         }
     }
-    for (int i = 0; i < N / 2; ++i) {
-        bomb();
-
-    }
+    solve();
     for (int r = 0; r < R; ++r) {
         for (int c = 0; c < C; ++c) {
             cout << graph[r][c];
         }
         cout << endl;
     }
-}
-
-int main() {
-    fastio;
-    cin >> R >> C >> N;
-    if (!(N & 1)) {
-        for (int r = 0; r < R; ++r) {
-            for (int c = 0; c < C; ++c) {
-                cout << 'O';
-            }
-            cout << endl;
-        }
-        return 0;
-    }
-    solve();
     return 0;
 }
