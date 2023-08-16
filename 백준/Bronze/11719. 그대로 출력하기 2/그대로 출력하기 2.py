@@ -1,5 +1,6 @@
 while True:
     try:
-        print(input())
+        s = input()
+        print(s)
     except:
         break
