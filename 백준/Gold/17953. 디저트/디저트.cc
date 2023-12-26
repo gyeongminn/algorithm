@@ -6,7 +6,7 @@ int A[10][100'000];
 int dp[10][100'000];
 
 void solve() {
-    for (int i = 0; i < N; ++i) { // N번째 날
+    for (int i = 1; i < N; ++i) { // N번째 날
         for (int j = 0; j < M; ++j) { // M^2로 모든 경우를 본다
             for (int k = 0; k < M; ++k) {
                 int val = dp[k][i - 1] + ((j == k) ? A[j][i] / 2 : A[j][i]);
