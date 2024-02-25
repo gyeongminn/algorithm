@@ -8,7 +8,7 @@ vector<string> v2;
 
 void solve() {
     int cnt = 0;
-    for (const string &p: v2) {
+    for (const auto &p: v2) {
         if (cnt == K) {
             break;
         }
@@ -23,8 +23,8 @@ void input() {
     for (auto &p: v1) {
         cin >> p;
     }
-    for (int i = L - 1; i >= 0; --i) {
-        string p = v1[i];
+    reverse(v1.begin(), v1.end());
+    for (const auto &p: v1) {
         if (!s.contains(p)) {
             s.insert(p);
             v2.push_back(p);
