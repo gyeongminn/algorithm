@@ -67,7 +67,8 @@ ll power_tower_naive(ll cur) {
 
 ll power_tower(ll cur, ll m) {
     if (m == 1) return 0;
-    if (cur == N - 1 || v[cur + 1] == 1) return v[cur] % m;
+    if (cur >= N - 1) return v[cur] % m;
+    if (v[cur] == 1) return power_tower(cur + 1, m);
 
     ll exp = power_tower_naive(cur + 1);
     if (N - cur <= 4 && exp != -1) {
@@ -83,7 +84,10 @@ void solve() {
     cin >> N;
     v.resize(N);
     for (ll &i : v) cin >> i;
-    cout << power_tower(0, M) << '\n';
+    for (int i = N - 1; i >= 0; i--) if (v[i] == 1) N = i;
+    ll ans = power_tower(0, M);
+    if (N == 0) ans = 1;
+    cout << ans << '\n';
 }
 
 int main() {
