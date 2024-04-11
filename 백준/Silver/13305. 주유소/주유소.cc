@@ -8,7 +8,7 @@ vector<int> dist;
 void solve() {
     long long ans = 0;
     for (int i = 0; i < N - 1; ++i) {
-        ans += price[i] * dist[i];
+        ans += (long long)price[i] * dist[i];
     }
     cout << ans;
 }
