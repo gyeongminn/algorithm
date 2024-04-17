@@ -1,19 +1,24 @@
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 #include <bits/stdc++.h>
 using namespace std;
 
+int N;
+string A[1000];
+
 int compare(string a, string b) {
-    if(a + b > b + a) return 1;
-    else return 0;
+    if (a + b > b + a) return 1;
+    return 0;
 }
 
 int main() {
-    cin.tie(nullptr)->sync_with_stdio(false);
-    int n;
-    cin >> n;
-    vector<string> v(n);
-    for (int i = 0; i < n; ++i) cin >> v[i];
-    sort(v.begin(), v.end(), compare);
-    if(v[0]=="0") cout << "0";
-    else {for (int i = 0; i < n; ++i) cout << v[i];}
+	ios::sync_with_stdio(false), cin.tie(nullptr);
+    cin >> N;
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    sort(A, A + N, compare);
+    if (A[0] == "0") {
+        cout << 0; return 0;
+    }
+    for (int i = 0; i < N; ++i) cout << A[i];
     return 0;
 }
