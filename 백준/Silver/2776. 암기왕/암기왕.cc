@@ -12,7 +12,7 @@ void solve() {
     cin >> m;
     for (int i = 0; i < m; ++i) {
         cin >> v;
-        cout << (s.count(v) ? 1 : 0) << '\n';
+        cout << s.contains(v) << '\n';
     }
 }
 
