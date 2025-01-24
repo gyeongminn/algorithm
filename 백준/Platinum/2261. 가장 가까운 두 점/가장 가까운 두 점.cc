@@ -11,15 +11,16 @@ int compareWithY(point a, point b) { return a.y > b.y; }
 int square(int n) { return n * n; }
 int dist_square(point a, point b) { return square(a.x - b.x) + square(a.y - b.y); }
 
-int processMidPart(int left, int right, int mid, int searchDistance) {
+int processCrossBoundaryPoints(int left, int right, int mid, int searchDistance) {
     point midPoint = points[mid];
+    
     vector<point> candidates;
     for (int i = left; i <= right; ++i) {
         if (square(points[i].x - midPoint.x) < searchDistance) {
             candidates.push_back(points[i]);
         }
     }
-
+    
     sort(candidates.begin(), candidates.end(), compareWithY);
 
     for (int i = 0; i < candidates.size(); i++) {
@@ -44,7 +45,7 @@ int solve(int left, int right) {
     int rightPart = solve(mid + 1, right);
 
     int minDistance = min(leftPart, rightPart);
-    minDistance = processMidPart(left, right, mid, minDistance);
+    minDistance = processCrossBoundaryPoints(left, right, mid, minDistance);
 
     return minDistance;
 }
