@@ -12,7 +12,7 @@ void solve() {
         for (int second = first + 1; second <= N; ++second) {
             int sumDistance = 0;
             for (int i = 1; i <= N; ++i) {
-                sumDistance += min(graph[first][i], graph[second][i]);
+                sumDistance += min(graph[first][i], graph[second][i]) * 2;
             }
 
             if (sumDistance < minDistance) {
@@ -22,7 +22,7 @@ void solve() {
         }
     }
 
-    cout << answer.first << ' ' << answer.second << ' ' << minDistance * 2;
+    cout << answer.first << ' ' << answer.second << ' ' << minDistance;
 }
 
 void applyFloydWarshall() {
@@ -37,7 +37,7 @@ void applyFloydWarshall() {
 
 void input() {
     cin >> N >> M;
-    for (int i = 0; i < N; ++i) {
+    for (int i = 0; i < M; ++i) {
         int a, b;
         cin >> a >> b;
         graph[a][b] = 1;
@@ -46,8 +46,8 @@ void input() {
 }
 
 void initialize() {
-    for (int i = 1; i <= 100; ++i) {
-        for (int j = 1; j <= 100; ++j) {
+    for (int i = 0; i <= 100; ++i) {
+        for (int j = 0; j <= 100; ++j) {
             if (i == j) graph[i][j] = 0;
             else graph[i][j] = inf;
         }
