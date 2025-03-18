@@ -5,7 +5,7 @@ int main()
     int m, n;
     scanf("%d %d", &m, &n);
 
-    int min = 999999999, sum = 0;
+    int sum = 0, min = 999999999;
     for (int i = 1; i * i <= 10000; i++) {
         int num = i * i;
         if (num < m || num > n) {
