@@ -3,7 +3,7 @@
 typedef struct matrix {
     int n_row; // number of rows
     int n_col; // number of columns
-    short data[100][100]; // matrix data
+    int data[100][100];
 } matrix;
 
 matrix input_matrix(int n, int m)
