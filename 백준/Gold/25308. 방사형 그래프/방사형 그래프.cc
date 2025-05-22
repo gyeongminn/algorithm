@@ -14,8 +14,8 @@ int solve(const vector<int> &indices) {
         int next_idx = indices[(i + 1) % 8];
         int next = abilities[next_idx];
 
-        long double harmonic_mean = (long double)prev * next / (prev + next);
-        if ((long double)now <= sqrt(2) * harmonic_mean) return false;
+        double harmonic_mean = (double)prev * next / (prev + next);
+        if (now <= sqrt(2) * harmonic_mean) return false;
     }
 
     return 1;
