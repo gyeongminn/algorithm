@@ -1,0 +1,5 @@
+n = int(input())
+if (n == 0): print(1); exit(0)
+length = len(str(n))
+compare = int(length * '1')
+print(length if compare <= n else length - 1)
