@@ -1,0 +1,126 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+struct SegmentTree {
+    int n = 0;
+    vector<ll> tree;
+    vector<ll> lazy;
+
+    SegmentTree() = default;
+
+    explicit SegmentTree(const int size) {
+        init(size);
+    }
+
+    explicit SegmentTree(const vector<ll> &arr) {
+        init(static_cast<int>(arr.size()));
+        build(1, 0, n - 1, arr);
+    }
+
+    void init(const int size) {
+        n = size;
+        tree.assign(4 * n, 0);
+        lazy.assign(4 * n, 0);
+    }
+
+    void build(const int node, const int start_index, const int end_index, const vector<ll> &arr) {
+        if (start_index == end_index) {
+            tree[node] = arr[start_index];
+            return;
+        }
+        int mid = (start_index + end_index) / 2;
+        build(node * 2, start_index, mid, arr);
+        build(node * 2 + 1, mid + 1, end_index, arr);
+        tree[node] = tree[node * 2] + tree[node * 2 + 1];
+    }
+
+    void push(const int node, const int start_index, const int end_index) {
+        if (lazy[node] == 0) return;
+
+        ll delta = lazy[node];
+        tree[node] += delta * (end_index - start_index + 1);
+
+        if (start_index != end_index) {
+            lazy[node * 2] += delta;
+            lazy[node * 2 + 1] += delta;
+        }
+
+        lazy[node] = 0;
+    }
+
+    void range_add(const int left, const int right, const ll delta) {
+        range_add(1, 0, n - 1, left, right, delta);
+    }
+
+    void range_add(const int node, const int start_index, const int end_index, const int left, const int right, const ll delta) {
+        push(node, start_index, end_index);
+
+        if (right < start_index || end_index < left) return;
+        if (left <= start_index && end_index <= right) {
+            lazy[node] += delta;
+            push(node, start_index, end_index);
+            return;
+        }
+
+        int mid = (start_index + end_index) / 2;
+        range_add(node * 2, start_index, mid, left, right, delta);
+        range_add(node * 2 + 1, mid + 1, end_index, left, right, delta);
+        tree[node] = tree[node * 2] + tree[node * 2 + 1];
+    }
+
+    ll range_sum(const int left, const int right) {
+        return range_sum(1, 0, n - 1, left, right);
+    }
+
+    ll range_sum(const int node, const int start_index, const int end_index, const int left, const int right) {
+        push(node, start_index, end_index);
+
+        if (right < start_index || end_index < left) return 0;
+        if (left <= start_index && end_index <= right) return tree[node];
+
+        int mid = (start_index + end_index) / 2;
+        ll sum_left = range_sum(node * 2, start_index, mid, left, right);
+        ll sum_right = range_sum(node * 2 + 1, mid + 1, end_index, left, right);
+        return sum_left + sum_right;
+    }
+};
+
+void solve_sum(SegmentTree &tree) {
+    int left, right;
+    cin >> left >> right;
+    cout << tree.range_sum(left, right) << "\n";
+}
+
+void solve_add(SegmentTree &tree) {
+    int left, right, diff;
+    cin >> left >> right >> diff;
+    tree.range_add(left, right, diff);
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+
+    int N, Q1, Q2;
+    cin >> N >> Q1 >> Q2;
+
+    vector<ll> arr(N + 1);
+    for (int i = 1; i <= N; i++) cin >> arr[i];
+    SegmentTree tree(arr);
+
+    for (ll i = 0; i < Q1 + Q2; i++) {
+        int option;
+        cin >> option;
+        switch (option) {
+            case 1:
+                solve_sum(tree);
+                break;
+            case 2:
+                solve_add(tree);
+                break;
+            default: ;
+        }
+    }
+
+    return 0;
+}
