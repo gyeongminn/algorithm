@@ -1,0 +1,122 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ull = unsigned long long;
+using i128 = __int128;
+
+static ull mod_mul(const ull a, const ull b, const ull mod) {
+    return static_cast<ull>(static_cast<i128>(a) * b % mod);
+}
+
+ull mod_pow(ull x, ull y, const ull mod) {
+    ull ret = 1;
+    x %= mod;
+    while (y > 0) {
+        if (y & 1) ret = mod_mul(ret, x, mod);
+        x = mod_mul(x, x, mod);
+        y >>= 1;
+    }
+    return ret;
+}
+
+bool sqrt_prime_prime_test(const ull n) {
+    for (ull i = 2; i * i <= n; ++i) { if (n % i == 0) return false; }
+    return true;
+}
+
+bool miller_rabin(const ull n, const ull d) {
+    ull k = n - 1;
+    while (k % 2 == 0) {
+        if (mod_pow(d, k, n) == n - 1) return true;
+        k /= 2;
+    }
+    ull tmp = mod_pow(d, k, n);
+    return tmp == 1 || tmp == n - 1;
+}
+
+bool is_prime(const ull n) {
+    if (n <= 1) return false;
+    for (ull p: {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}) {
+        if (n == p) return true;
+        if (n % p == 0) return false;
+    }
+
+    static constexpr ull bases[] = {2, 325, 9'375, 28'178, 450'775, 9'780'504, 1'795'265'022};
+    return std::ranges::all_of(bases, [&](const ull d) {
+        return n % d != 0 && miller_rabin(n, d);
+    });
+}
+\
+static ull pack_key(const ull small_score, const ull large_score) {
+    return static_cast<ull>(small_score) << 32 | static_cast<ull>(large_score);
+}
+
+static unordered_map<ull, long long> memo;
+static unordered_map<ull, ull> previous_prime_cache;
+
+static ull previous_prime(ull value) {
+    auto iterator = previous_prime_cache.find(value);
+    if (iterator != previous_prime_cache.end()) return iterator->second;
+
+    if (value < 2) return previous_prime_cache[value] = 0;
+    if (value == 2) return previous_prime_cache[value] = 2;
+
+    if ((value & 1ULL) == 0) value--;
+
+    while (value >= 2 && !is_prime(value)) value -= 2;
+
+    previous_prime_cache[value] = value;
+    return value;
+}
+
+static long long solve_minimum_sum(ull score_a, ull score_b) {
+    ull small_score = score_a;
+    ull large_score = score_b;
+    if (small_score > large_score) swap(small_score, large_score);
+
+    if (small_score == 0) {
+        return static_cast<long long>(large_score) * (static_cast<long long>(large_score) + 1) / 2;
+    }
+    if (small_score == 1) {
+        return static_cast<long long>(small_score) + static_cast<long long>(large_score);
+    }
+
+    ull key = pack_key(small_score, large_score);
+    auto iterator = memo.find(key);
+    if (iterator != memo.end()) return iterator->second;
+
+    if (small_score < large_score && is_prime(large_score)) {
+        long long answer = static_cast<long long>(small_score) + static_cast<long long>(large_score);
+        memo.emplace(key, answer);
+        return answer;
+    }
+
+    if (is_prime(small_score)) {
+        ull prime_floor = previous_prime(large_score);
+        if (prime_floor != 0 && small_score < prime_floor) {
+            ull small_value = small_score;
+            ull first_multiple_in_range = (prime_floor + small_value - 1) / small_value * small_value;
+            if (first_multiple_in_range > large_score) {
+                long long answer = static_cast<long long>(small_score) + static_cast<long long>(large_score);
+                memo.emplace(key, answer);
+                return answer;
+            }
+        }
+    }
+
+    long long best_from_left = solve_minimum_sum(small_score - 1, large_score);
+    long long best_from_down = solve_minimum_sum(small_score, large_score - 1);
+
+    long long answer = min(best_from_left, best_from_down) + gcd(small_score, large_score);
+    memo.emplace(key, answer);
+    return answer;
+}
+
+int main() {
+    ios::sync_with_stdio(false),cin.tie(nullptr);
+
+    ull a, b;
+    cin >> a >> b;
+
+    cout << solve_minimum_sum(a, b) << "\n";
+    return 0;
+}
