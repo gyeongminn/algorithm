@@ -1,0 +1,70 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct query {
+    int index, start, end;
+} query;
+
+int N, Q;
+vector<int> arr;
+vector<int> frequency;
+vector<query> queries;
+vector<long long> answers;
+
+void solve() {
+    int block_size = max(1, static_cast<int>(sqrt(N)));
+    answers.resize(Q);
+
+    ranges::sort(queries, [&](const query &a, const query &b) {
+        int block_a = a.start / block_size;
+        int block_b = b.start / block_size;
+        if (block_a != block_b) return block_a < block_b;
+        if (!(block_a & 1)) return a.end < b.end;
+        return a.end > b.end;
+    });
+
+    int current_left = 0;
+    int current_right = -1;
+    long long sum = 0;
+
+    auto add_value = [&](const int value) {
+        long long count = frequency[value];
+        sum += (2 * count + 1) * 1LL * value;
+        frequency[value] = static_cast<int>(count + 1);
+    };
+
+    auto remove_value = [&](const int value) {
+        long long count = frequency[value];
+        sum += (-2 * count + 1) * 1LL * value;
+        frequency[value] = static_cast<int>(count - 1);
+    };
+
+    for (const auto &[index, start, end]: queries) {
+        while (current_left > start) add_value(arr[--current_left]);
+        while (current_right < end) add_value(arr[++current_right]);
+        while (current_left < start) remove_value(arr[current_left++]);
+        while (current_right > end) remove_value(arr[current_right--]);
+
+        answers[index] = sum;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    frequency.resize(1'000'000 + 1);
+
+    cin >> N >> Q;
+    arr.resize(N);
+    for (int &i: arr) cin >> i;
+
+    for (int index = 0; index < Q; index++) {
+        int i, j;
+        cin >> i >> j;
+        queries.push_back({index, i - 1, j - 1});
+    }
+
+    solve();
+    for (long long answer: answers) cout << answer << "\n";
+
+    return 0;
+}
