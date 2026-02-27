@@ -1,0 +1,180 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+struct SegmentTree {
+private:
+    int n = 0;
+    vector<ll> tree;
+    vector<ll> lazy;
+
+    SegmentTree() = default;
+
+    void init(const int size) {
+        n = size;
+        tree.assign(4 * n, 0);
+        lazy.assign(4 * n, 0);
+    }
+
+    void build(const int node, const int start_index, const int end_index, const vector<ll> &arr) {
+        if (start_index == end_index) {
+            tree[node] = arr[start_index];
+            return;
+        }
+        int mid = (start_index + end_index) / 2;
+        build(node * 2, start_index, mid, arr);
+        build(node * 2 + 1, mid + 1, end_index, arr);
+        tree[node] = tree[node * 2] + tree[node * 2 + 1];
+    }
+
+    void push(const int node, const int start_index, const int end_index) {
+        if (lazy[node] == 0) return;
+
+        ll delta = lazy[node];
+        tree[node] += delta * (end_index - start_index + 1);
+
+        if (start_index != end_index) {
+            lazy[node * 2] += delta;
+            lazy[node * 2 + 1] += delta;
+        }
+
+        lazy[node] = 0;
+    }
+
+    ll range_sum(const int node, const int start_index, const int end_index, const int left, const int right) {
+        push(node, start_index, end_index);
+
+        if (right < start_index || end_index < left) return 0;
+        if (left <= start_index && end_index <= right) return tree[node];
+
+        int mid = (start_index + end_index) / 2;
+        ll sum_left = range_sum(node * 2, start_index, mid, left, right);
+        ll sum_right = range_sum(node * 2 + 1, mid + 1, end_index, left, right);
+        return sum_left + sum_right;
+    }
+
+    void range_add(const int node, const int start_index, const int end_index, const int left, const int right, const ll delta) {
+        push(node, start_index, end_index);
+
+        if (right < start_index || end_index < left) return;
+        if (left <= start_index && end_index <= right) {
+            lazy[node] += delta;
+            push(node, start_index, end_index);
+            return;
+        }
+
+        int mid = (start_index + end_index) / 2;
+        range_add(node * 2, start_index, mid, left, right, delta);
+        range_add(node * 2 + 1, mid + 1, end_index, left, right, delta);
+        tree[node] = tree[node * 2] + tree[node * 2 + 1];
+    }
+
+public:
+    explicit SegmentTree(const int size) {
+        init(size);
+    }
+
+    explicit SegmentTree(const vector<ll> &arr) {
+        init(static_cast<int>(arr.size()));
+        build(1, 0, n - 1, arr);
+    }
+
+    void range_add(const int left, const int right, const ll delta) {
+        range_add(1, 0, n - 1, left, right, delta);
+    }
+
+    ll range_sum(const int left, const int right) {
+        return range_sum(1, 0, n - 1, left, right);
+    }
+
+    ll point_get(const int node) {
+        return range_sum(node, node);
+    }
+
+    void point_add(const int node, const ll delta) {
+        range_add(node, node, delta);
+    }
+};
+
+int N, M;
+vector<ll> salary_arr;
+vector<vector<int> > graph;
+vector<int> in, out;
+
+void dfs(const int root) {
+    int timer = 0;
+    vector parent(graph.size(), -1);
+    vector iter_index(graph.size(), 0);
+    stack<int> stack;
+    stack.push(root);
+
+    while (!stack.empty()) {
+        int node = stack.top();
+
+        if (iter_index[node] == 0) in[node] = timer++;
+
+        int child_size = static_cast<int>(graph[node].size());
+        if (iter_index[node] < child_size) {
+            int next = graph[node][iter_index[node]++];
+            stack.push(next);
+        } else {
+            out[node] = timer - 1;
+            stack.pop();
+        }
+    }
+}
+
+void input() {
+    cin >> N >> M;
+    graph.assign(N, {});
+    salary_arr.assign(N, 0);
+    in.assign(N, 0);
+    out.assign(N, 0);
+
+    int parent, salary;
+    cin >> salary;
+    salary_arr[0] = salary;
+
+    for (int i = 1; i < N; i++) {
+        cin >> salary >> parent;
+        graph[parent - 1].push_back(i);
+        salary_arr[i] = salary;
+    }
+}
+
+void solve() {
+    dfs(0);
+    vector<ll> euler_arr(N);
+    for (int node = 0; node < N; node++) {
+        euler_arr[in[node]] = salary_arr[node];
+    }
+    SegmentTree tree(euler_arr);
+
+    for (int i = 0; i < M; i++) {
+        char option;
+        cin >> option;
+
+        int position, diff, left, right;
+        cin >> position;
+        int node = position - 1;
+
+        switch (option) {
+            case 'p':
+                cin >> diff;
+                left = in[node] + 1, right = out[node];
+                if (left <= right) tree.range_add(left, right, diff);
+                break;
+            case 'u':
+                cout << tree.point_get(in[node]) << '\n';
+                break;
+            default: ;
+        }
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+    input();
+    solve();
+    return 0;
+}
