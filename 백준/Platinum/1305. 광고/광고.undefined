@@ -1,0 +1,33 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+static vector<int> build_prefix_function(const string &pattern) {
+    int pattern_size = static_cast<int>(pattern.size());
+    vector<int> prefix_function(pattern_size, 0);
+
+    int matched_length = 0;
+    for (int index = 1; index < pattern_size; ++index) {
+        while (matched_length > 0 && pattern[index] != pattern[matched_length]) {
+            matched_length = prefix_function[matched_length - 1];
+        }
+
+        if (pattern[index] == pattern[matched_length]) matched_length++;
+        prefix_function[index] = matched_length;
+    }
+
+    return prefix_function;
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+
+    int N;
+    cin >> N;
+    string text;
+    cin >> text;
+    
+    vector<int> prefix_function = build_prefix_function(text);
+    cout << N - prefix_function.back() << endl;
+
+    return 0;
+}
