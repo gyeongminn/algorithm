@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct query {
+    int index, start, end;
+} query;
+
+int N, M;
+vector<int> arr;
+vector<int> frequency;
+vector<int> frequency_count;
+vector<query> queries;
+vector<int> answers;
+
+void solve() {
+    int block_size = max(1, static_cast<int>(sqrt(N)));
+    answers.resize(M);
+
+    ranges::sort(queries, [&](const query &a, const query &b) {
+        int block_a = a.start / block_size;
+        int block_b = b.start / block_size;
+
+        if (block_a != block_b) return block_a < block_b;
+        return a.end > b.end;
+    });
+
+    int current_left = 0;
+    int current_right = -1;
+    int current_max_frequency = 0;
+
+    auto add_value = [&](const int value) {
+        int old_frequency = frequency[value];
+        if (old_frequency > 0) frequency_count[old_frequency]--;
+
+        int new_frequency = ++frequency[value];
+        frequency_count[new_frequency]++;
+
+        if (new_frequency > current_max_frequency) current_max_frequency = new_frequency;
+    };
+
+    auto remove_value = [&](const int value) {
+        int old_frequency = frequency[value];
+        frequency_count[old_frequency]--;
+
+        int new_frequency = --frequency[value];
+        if (new_frequency > 0) frequency_count[new_frequency]++;
+
+        while (current_max_frequency > 0 && frequency_count[current_max_frequency] == 0) {
+            current_max_frequency--;
+        }
+    };
+
+    for (const query &q: queries) {
+        while (current_left > q.start) add_value(arr[--current_left]);
+        while (current_right < q.end) add_value(arr[++current_right]);
+        while (current_left < q.start) remove_value(arr[current_left++]);
+        while (current_right > q.end) remove_value(arr[current_right--]);
+
+        answers[q.index] = current_max_frequency;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+
+    cin >> N;
+    arr.resize(N);
+    for (int &i: arr) cin >> i;
+
+    cin >> M;
+    queries.resize(M);
+    int count = 0;
+    for (auto &[index, start, end]: queries) {
+        cin >> start >> end;
+        start--, end--;
+        index = count++;
+    }
+
+    frequency.resize(100'000 + 1);
+    frequency_count.resize(N + 1);
+
+    solve();
+    for (int answer: answers) cout << answer << "\n";
+
+    return 0;
+}
