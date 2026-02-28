@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct MergeSortTree {
+private:
+    int n;
+    vector<vector<int> > tree;
+
+    void build(int node, int start_index, int end_index, const vector<int> &arr) {
+        if (start_index == end_index) {
+            tree[node] = {arr[start_index]};
+            return;
+        }
+
+        int mid = (start_index + end_index) / 2;
+        build(node * 2, start_index, mid, arr);
+        build(node * 2 + 1, mid + 1, end_index, arr);
+
+        vector<int> &left = tree[node * 2];
+        vector<int> &right = tree[node * 2 + 1];
+        tree[node].resize(left.size() + right.size());
+        ranges::merge(left, right, tree[node].begin());
+    }
+
+    template<class F>
+    void visit(int node, int start_index, int end_index, int left, int right, F &&fn) const {
+        if (right < start_index || end_index < left) return;
+
+        if (left <= start_index && end_index <= right) {
+            fn(tree[node]);
+            return;
+        }
+
+        int mid = (start_index + end_index) / 2;
+        visit(node * 2, start_index, mid, left, right, fn);
+        visit(node * 2 + 1, mid + 1, end_index, left, right, fn);
+    }
+
+public:
+    explicit MergeSortTree(const vector<int> &arr) {
+        n = static_cast<int>(arr.size());
+        tree.resize(4 * n);
+        build(1, 0, n - 1, arr);
+    }
+
+    template<class F>
+    void for_each_bucket(int left, int right, F &&fn) const {
+        visit(1, 0, n - 1, left, right, fn);
+    }
+};
+
+
+int main() {
+    ios::sync_with_stdio(false), cin.tie(nullptr);
+
+    int N, M;
+    cin >> N;
+    vector<int> arr(N);
+    for (int &i: arr) cin >> i;
+    MergeSortTree mst(arr);
+
+    cin >> M;
+    int last_ans = 0;
+    for (int i = 0; i < M; ++i) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        int left = (a ^ last_ans) - 1;
+        int right = (b ^ last_ans) - 1;
+        int value = c ^ last_ans;
+
+        int count = 0;
+        mst.for_each_bucket(left, right, [&](const vector<int> &bucket) {
+            auto it = ranges::upper_bound(bucket, value);
+            count += static_cast<int>(bucket.end() - it);
+        });
+
+        last_ans = count;
+        cout << count << '\n';
+    }
+
+    return 0;
+}
