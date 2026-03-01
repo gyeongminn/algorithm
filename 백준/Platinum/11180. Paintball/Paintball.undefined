@@ -1,0 +1,66 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> matched_list;
+
+int max_matching(const vector<vector<int> > &adjacency, const int left_size, const int right_size) {
+    int stamp;
+    matched_list.resize(right_size);
+    ranges::fill(matched_list, -1);
+    vector<int> visited_right_stamp(right_size);
+
+    function<bool(int)> try_match = [&](const int left_index) -> bool {
+        for (int right_index: adjacency[left_index]) {
+            if (visited_right_stamp[right_index] == stamp) continue;
+            visited_right_stamp[right_index] = stamp;
+
+            int other_left_index = matched_list[right_index];
+            if (other_left_index == -1 || try_match(other_left_index)) {
+                matched_list[right_index] = left_index;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    int matched_count = 0;
+    for (int left_index = 0; left_index < left_size; left_index++) {
+        stamp = left_index + 1;
+        if (try_match(left_index)) matched_count++;
+    }
+
+    return matched_count;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    int N, M;
+    cin >> N >> M;
+    vector<vector<int> > adjacency(N);
+    for (int i = 0; i < M; i++) {
+        int left_index, right_index;
+        cin >> left_index >> right_index;
+        left_index--, right_index--;
+        adjacency[left_index].push_back(right_index);
+        adjacency[right_index].push_back(left_index);
+    }
+
+    int matched_count = max_matching(adjacency, N, N);
+    if (matched_count != N) {
+        cout << "Impossible\n";
+        return 0;
+    }
+
+    vector<int> target_of_left(N, -1);
+    for (int right_index = 0; right_index < N; right_index++) {
+        int left_index = matched_list[right_index];
+        if (left_index != -1) target_of_left[left_index] = right_index;
+    }
+
+    for (int i = 0; i < N; i++) {
+        cout << target_of_left[i] + 1 << '\n';
+    }
+
+    return 0;
+}
