@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int max_matching(const vector<vector<int> > &adjacency, const int left_size, const int right_size) {
+    int stamp;
+    vector<int> matched_list(right_size);
+    ranges::fill(matched_list, -1);
+    vector<int> visited_right_stamp(right_size);
+
+    function<bool(int)> try_match = [&](const int left_index) -> bool {
+        for (int right_index: adjacency[left_index]) {
+            if (visited_right_stamp[right_index] == stamp) continue;
+            visited_right_stamp[right_index] = stamp;
+
+            int other_left_index = matched_list[right_index];
+            if (other_left_index == -1 || try_match(other_left_index)) {
+                matched_list[right_index] = left_index;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    int matched_count = 0;
+    for (int left_index = 0; left_index < left_size; left_index++) {
+        stamp = left_index + 1;
+        if (try_match(left_index)) matched_count++;
+    }
+
+    return matched_count;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    int N, M;
+    cin >> N >> M;
+    vector<int> lefts(N), rights(M);
+    vector<int> left_conditions(N), right_conditions(M);
+
+    for (int &i: lefts) cin >> i;
+    for (int &i: rights) cin >> i;
+    for (int &i: left_conditions) cin >> i;
+    for (int &i: right_conditions) cin >> i;
+
+    vector<vector<int> > adjacency(N);
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            int left = lefts[i], right = rights[j];
+            int left_condition = left_conditions[i], right_condition = right_conditions[j];
+
+            if (right_condition < left && left_condition > right) {
+                adjacency[i].push_back(j);
+            }
+        }
+    }
+
+    int matched_count = max_matching(adjacency, N, M);
+    cout << matched_count << '\n';
+
+    return 0;
+}
