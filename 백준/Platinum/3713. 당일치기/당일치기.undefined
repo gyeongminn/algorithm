@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct Student {
+    int height;
+    char gender;
+    string music;
+    string sport;
+} Student;
+
+int max_matching(const vector<vector<int> > &adjacency, const int left_size, const int right_size) {
+    int stamp;
+    vector<int> matched_list(right_size);
+    ranges::fill(matched_list, -1);
+    vector<int> visited_right_stamp(right_size);
+
+    function<bool(int)> try_match = [&](const int left_index) -> bool {
+        for (int right_index: adjacency[left_index]) {
+            if (visited_right_stamp[right_index] == stamp) continue;
+            visited_right_stamp[right_index] = stamp;
+
+            int other_left_index = matched_list[right_index];
+            if (other_left_index == -1 || try_match(other_left_index)) {
+                matched_list[right_index] = left_index;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    int matched_count = 0;
+    for (int left_index = 0; left_index < left_size; left_index++) {
+        stamp = left_index + 1;
+        if (try_match(left_index)) matched_count++;
+    }
+
+    return matched_count;
+}
+
+bool check(const Student &m, const Student &f) {
+    if (abs(m.height - f.height) > 40) return false;
+    if (m.music != f.music) return false;
+    if (m.sport == f.sport) return false;
+    return true;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    int T;
+    cin >> T;
+    while (T--) {
+        int N;
+        cin >> N;
+
+        vector<Student> students(N);
+        for (int i = 0; i < N; i++) {
+            cin >> students[i].height >> students[i].gender >> students[i].music >> students[i].sport;
+        }
+
+        vector<int> male_indices, female_indices;
+        for (int i = 0; i < N; i++) {
+            if (students[i].gender == 'M') male_indices.push_back(i);
+            else female_indices.push_back(i);
+        }
+        int left_size = static_cast<int>(male_indices.size());
+        int right_size = static_cast<int>(female_indices.size());
+
+        vector<vector<int> > adjacency(left_size);
+        for (int i = 0; i < left_size; i++) {
+            for (int j = 0; j < right_size; j++) {
+                const Student &m = students[male_indices[i]], &f = students[female_indices[j]];
+                if (check(m, f)) adjacency[i].push_back(j);
+            }
+        }
+
+        int answer = N - max_matching(adjacency, left_size, right_size);
+        cout << answer << '\n';
+    }
+
+    return 0;
+}
