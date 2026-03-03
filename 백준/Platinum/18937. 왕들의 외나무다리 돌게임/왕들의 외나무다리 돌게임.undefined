@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+ll mex_of_array(const vector<ll> &arr) {
+    ll size = static_cast<ll>(arr.size());
+    vector<bool> present(size + 1);
+
+    for (ll x: arr) {
+        if (0 <= x && x <= size) present[x] = true;
+    }
+
+    for (ll candidate = 0; candidate <= size; candidate++) {
+        if (!present[candidate]) return candidate;
+    }
+    return size + 1;
+}
+
+ll xor_of_array(const vector<ll> &arr) {
+    ll xor_value = 0;
+    for (ll x: arr) xor_value ^= x;
+    return xor_value;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    ll N;
+    cin >> N;
+
+    vector<ll> arr(N);
+    for (ll &i: arr) {
+        cin >> i;
+        i -= 2;
+    }
+
+    string first;
+    cin >> first;
+    string second = first == "Whiteking" ? "Blackking" : "Whiteking";
+
+    cout << (xor_of_array(arr) ? first : second) << endl;
+    return 0;
+}
