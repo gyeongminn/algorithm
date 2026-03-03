@@ -1,0 +1,28 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+
+ll xor_of_array(const vector<ll> &arr) {
+    ll xor_value = 0;
+    for (ll x: arr) xor_value ^= x;
+    return xor_value;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    ll N, M;
+    cin >> N >> M;
+
+    vector<ll> row_sum(N, 0);
+    for (ll r = 0; r < N; r++) {
+        for (ll c = 0; c < M; c++) {
+            ll x;
+            cin >> x;
+            row_sum[r] += x;
+        }
+    }
+
+    cout << (!xor_of_array(row_sum) ? "ainta" : "august14") << endl;
+    return 0;
+}
