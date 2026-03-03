@@ -1,0 +1,16 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int N;
+    cin >> N;
+
+    int answer = 0;
+    for (int i = 0; i < N; i++) {
+        int a;
+        cin >> a;
+        answer ^= a;
+    }
+    cout << (answer == 0 ? "cubelover" : "koosaga")<< endl;
+    return 0;
+}
