@@ -1,0 +1,74 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int max_matching(const vector<vector<int> > &adjacency, const int left_size, const int right_size) {
+    int stamp;
+    vector<int> matched_list(right_size);
+    ranges::fill(matched_list, -1);
+    vector<int> visited_right_stamp(right_size);
+
+    function<bool(int)> try_match = [&](const int left_index) -> bool {
+        for (int right_index: adjacency[left_index]) {
+            if (visited_right_stamp[right_index] == stamp) continue;
+            visited_right_stamp[right_index] = stamp;
+
+            int other_left_index = matched_list[right_index];
+            if (other_left_index == -1 || try_match(other_left_index)) {
+                matched_list[right_index] = left_index;
+                return true;
+            }
+        }
+        return false;
+    };
+
+    int matched_count = 0;
+    for (int left_index = 0; left_index < left_size; left_index++) {
+        stamp = left_index + 1;
+        if (try_match(left_index)) matched_count++;
+    }
+
+    return matched_count;
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    int M, N, K;
+    cin >> M >> N >> K;
+
+    vector<vector<int>> adjacency(M);
+    vector<int> right_used(N, 0);
+    for (int i = 0; i < K; i++) {
+        int a, b;
+        cin >> a >> b;
+        a--; b--;
+
+        if (a < M && b >= M) {
+            int left_index = a;
+            int right_index = b - M;
+            adjacency[left_index].push_back(right_index);
+            right_used[right_index] = 1;
+        } else if (b < M && a >= M) {
+            int left_index = b;
+            int right_index = a - M;
+            adjacency[left_index].push_back(right_index);
+            right_used[right_index] = 1;
+        }
+    }
+
+    int left_used_count = 0;
+    for (int left_index = 0; left_index < M; left_index++) {
+        if (!adjacency[left_index].empty()) left_used_count++;
+    }
+    int right_used_count = 0;
+    for (int right_index = 0; right_index < N; right_index++) {
+        if (right_used[right_index]) right_used_count++;
+    }
+
+    int matched_count = max_matching(adjacency, M, N);
+    cout << (left_used_count + right_used_count - matched_count) << '\n';
+
+    return 0;
+}
