@@ -1,0 +1,108 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+struct Point {
+    ll x, y;
+};
+
+Point arr[100000];
+stack<Point> s;
+
+ll ccw(const Point &a, const Point &b, const Point &c) {
+    return 1LL * (b.x - a.x) * (c.y - a.y) - 1LL * (c.x - a.x) * (b.y - a.y);
+}
+
+bool compare_y(const Point &a, const Point &b) {
+    if (a.y == b.y)
+        return a.x < b.x;
+    return a.y < b.y;
+}
+
+ll distance_square(const Point &a, const Point &b) {
+    ll dx = a.x - b.x;
+    ll dy = a.y - b.y;
+    return dx * dx + dy * dy;
+}
+
+bool compare_ccw(const Point &a, const Point &b) {
+    ll c = ccw(arr[0], a, b);
+    if (c != 0) return c > 0;
+    return distance_square(arr[0], a) < distance_square(arr[0], b);
+}
+
+ll area2_polygon(const vector<Point> &hull) {
+    int size = static_cast<int>(hull.size());
+    __int128 sum = 0;
+    for (int i = 0; i < size; i++) {
+        int j = (i + 1) % size;
+        sum += static_cast<__int128>(hull[i].x) * hull[j].y - static_cast<__int128>(hull[i].y) * hull[j].x;
+    }
+    if (sum < 0) sum = -sum;
+    return static_cast<ll>(sum);
+}
+
+ll boundary_points(const vector<Point> &hull) {
+    int size = static_cast<int>(hull.size());
+    ll ret = 0;
+    for (int i = 0; i < size; i++) {
+        int j = (i + 1) % size;
+        ll dx = llabs(hull[i].x - hull[j].x);
+        ll dy = llabs(hull[i].y - hull[j].y);
+        ret += std::gcd(dx, dy);
+    }
+    return ret;
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+    int n;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i].x >> arr[i].y;
+    }
+
+    sort(arr, arr + n, compare_y);
+    sort(arr + 1, arr + n, compare_ccw);
+
+    s.push(arr[0]);
+    s.push(arr[1]);
+
+    for (int i = 2; i < n; i++) {
+        while (s.size() > 1) {
+            Point second = s.top();
+            s.pop();
+            Point first = s.top();
+            if (ccw(first, second, arr[i]) > 0) {
+                s.push(second);
+                break;
+            }
+        }
+        s.push(arr[i]);
+    }
+
+    vector<Point> v;
+
+    while (s.size() > 0) {
+        v.push_back(s.top());
+        s.pop();
+    }
+
+
+    int idx = 0;
+    for (int i = 0; i < v.size(); i++) {
+        if (v[idx].y < v[i].y) {
+            idx = i;
+        } else if (v[idx].y == v[i].y) {
+            if (v[idx].x > v[i].x) {
+                idx = i;
+            }
+        }
+    }
+
+    ll A = area2_polygon(v);
+    ll B = boundary_points(v);
+    ll I = (A - B + 2) / 2;
+
+    cout << I << '\n';
+}
