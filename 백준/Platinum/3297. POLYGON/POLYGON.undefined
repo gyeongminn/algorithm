@@ -1,0 +1,67 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+
+struct Point {
+    ll x, y;
+};
+
+Point arr[100000];
+stack<Point> s;
+
+ll ccw(const Point &a, const Point &b, const Point &c) {
+    return 1LL * (b.x - a.x) * (c.y - a.y) - 1LL * (c.x - a.x) * (b.y - a.y);
+}
+
+ll cross0(const Point &a, const Point &b) {
+    return a.x * b.y - a.y * b.x; // O->a x O->b
+}
+
+ll dist2(const Point &a) {
+    return a.x * a.x + a.y * a.y;
+}
+
+bool polar_cmp(const Point &a, const Point &b) {
+    ll cr = cross0(a, b);
+    if (cr != 0) return cr > 0;
+    return dist2(a) < dist2(b);
+}
+
+int main() {
+    ios_base::sync_with_stdio(false), cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<Point> p(n);
+    for (int i = 0; i < n; i++) cin >> p[i].x >> p[i].y;
+    ranges::sort(p, polar_cmp);
+
+    vector<vector<int> > dp(n, vector<int>(n, 0));
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (ccw({0, 0}, p[i], p[j]) > 0) dp[i][j] = 3;
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (!dp[i][j]) continue;
+            for (int k = 0; k < i; k++) {
+                if (!dp[k][i]) continue;
+                if (ccw(p[k], p[i], p[j]) > 0) {
+                    dp[i][j] = max(dp[i][j], dp[k][i] + 1);
+                }
+            }
+        }
+    }
+
+    int ans = 3;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (!dp[i][j]) continue;
+            if (ccw(p[i], p[j], {0, 0}) > 0) ans = max(ans, dp[i][j]);
+        }
+    }
+
+    cout << ans << '\n';
+}
